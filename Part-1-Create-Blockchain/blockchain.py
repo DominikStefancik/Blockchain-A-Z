@@ -1,5 +1,5 @@
 """
-Created on Mon Jul  2 18:05:41 2018
+Created on Mon Jul 2 2018
 
 @author: Dominik Stefancik
 """
@@ -7,7 +7,6 @@ Created on Mon Jul  2 18:05:41 2018
 import datetime
 import hashlib
 import json
-from flask import Flask, jsonify
 
 # Part 1 - Building a Blockchain
 
@@ -74,5 +73,4 @@ class Blockchain:
     
     def is_hash_valid(hash):
         return hash[:4] == "0000"
-        
         
