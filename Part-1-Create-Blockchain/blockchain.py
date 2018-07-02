@@ -31,4 +31,19 @@ class Blockchain:
     def get_previous_block(self):
         return self.chain[-1] # return the last block of the chain
     
+    def proof_of_work(self, previous_proof):
+        new_proof = 1
+        check_proof = False
+        while not check_proof:
+            asymetrical_operation = new_proof**2 - previous_proof**2
+            # the argument of the function here has to be a non-symetrical operation
+            # e.g. new_proof + previous_proof cannot be used, because it is a symetrical operation
+            # encoding is required for sha256 method
+            hash_operation = hashlib.sha256(str(asymetrical_operation).encode()).hexdigest()
+            if hash_operation[:4] == "0000":
+                check_proof = True
+            else:
+                new_proof += 1
+                
+        return new_proof        
 
