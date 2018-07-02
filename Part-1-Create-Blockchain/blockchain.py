@@ -71,6 +71,6 @@ class Blockchain:
         # encoding is required for sha256 method
         return hashlib.sha256(str(asymetrical_operation).encode()).hexdigest()
     
-    def is_hash_valid(hash):
+    def is_hash_valid(self, hash):
         return hash[:4] == "0000"
         
