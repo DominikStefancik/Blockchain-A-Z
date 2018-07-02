@@ -53,7 +53,7 @@ class Blockchain:
             previous_block = self.chain[index - 1]
             
             # check of previous hash matches
-            if block["previous_hash"] != self.hash(previous_block):
+            if block["previous_hash"] != self.get_block_hash(previous_block):
                 return False
             
             previous_proof = previous_block["proof"]
