@@ -7,6 +7,7 @@ Created on Mon Jul 2 2018
 import datetime
 import hashlib
 import json
+import logging
 
 # Part 1 - Building a Blockchain
 
@@ -24,6 +25,7 @@ class Blockchain:
             "previous_hash": previous_hash
         }
         
+        logging.info("New block created: ", block)
         self.chain.append(block)
         return block
     
@@ -32,11 +34,12 @@ class Blockchain:
     
     def proof_of_work(self, previous_proof):
         new_proof = 1
-        check_proof = False
-        while not check_proof:
+        is_proof_valid = False
+        while not is_proof_valid:
             hash = self.get_hash_sha256(previous_proof, new_proof)
-            if self.is_hash_valid(hash):
-                check_proof = True
+            if self.is_proof_of_work_valid(hash):
+                logging.info("Proof of work found. Previous proof: ", previous_proof, ", new proof: ", new_proof)
+                is_proof_valid = True
             else:
                 new_proof += 1
                 
@@ -48,18 +51,22 @@ class Blockchain:
         return hashlib.sha256(encoded_block).hexdigest()
     
     def is_chain_valid(self):
-        for index, block in enumerate(self.chain[1:]):
+        for index, block in enumerate(self.chain[1:], start=1):
             previous_block = self.chain[index - 1]
             
             # check of previous hash matches
             if block["previous_hash"] != self.get_block_hash(previous_block):
+                logging.error("Hash to a previous block doesn't match. Block index: ", block["index"],
+                              ", previous hash: ", block["previous_hash"])
                 return False
             
             previous_proof = previous_block["proof"]
             current_proof = block["proof"]
             hash = self.get_hash_sha256(previous_proof, current_proof)
             # check if proof of work is valid
-            if not self.is_hash_valid(hash):
+            if not self.is_proof_of_work_valid(hash):
+                logging.error("Proof of work of the block is not valid. Block index: ", block["index"],
+                              ", proof of work: ", block["proof"])
                 return False
             
         return True
@@ -71,6 +78,6 @@ class Blockchain:
         # encoding is required for sha256 method
         return hashlib.sha256(str(asymetrical_operation).encode()).hexdigest()
     
-    def is_hash_valid(self, hash):
+    def is_proof_of_work_valid(self, hash):
         return hash[:4] == "0000"
         
