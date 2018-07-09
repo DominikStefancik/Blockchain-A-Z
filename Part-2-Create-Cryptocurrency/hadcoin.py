@@ -1,5 +1,5 @@
 """
-Created on Mon Jul 2 2018
+Created on Fri Jul 6 2018
 
 @author: Dominik Stefancik
 """
@@ -9,9 +9,9 @@ import hashlib
 import json
 import logging
 
-# Part 1 - Building a Blockchain
+# Part 3 - Building a Cryptocurrency
 
-# Class representing a generic blockchain without any content
+# Class representing a specific blockchain containing transactions
 class Blockchain:
     
     def __init__(self):
