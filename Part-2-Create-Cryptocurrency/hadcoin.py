@@ -8,6 +8,7 @@ import datetime
 import hashlib
 import json
 import logging
+from urllib.parse import urlparse
 
 # Part 3 - Building a Cryptocurrency
 
@@ -18,6 +19,7 @@ class Blockchain:
         self.chain = [] # represents a chain of blocks
         self.transactions = [] # represents a list of transactions which are added to a newly mined block
         self.create_block(proof = 1, previous_hash = "0") # creates a genesis block
+        self.nodes = new set() # a set of all nodes connected tot he network and containing a copy of the same blockchain
 
     def create_block(self, proof, previous_hash):
         block = {
@@ -96,3 +98,7 @@ class Blockchain:
             
         # return an index of a block which will contain the list of transactions
         return len(self.chain) + 1
+    
+    def add_node(self, address):
+        parsed_url = urlparse(address)
+        self.nodes.add(parsed_url.netloc) # an address represents a node connected to the network
