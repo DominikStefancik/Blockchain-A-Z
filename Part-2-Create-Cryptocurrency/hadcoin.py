@@ -11,11 +11,12 @@ import logging
 
 # Part 3 - Building a Cryptocurrency
 
-# Class representing a specific blockchain containing transactions
+# Class representing a specific blockchain containing transactions so it can represent a cryptocurrency
 class Blockchain:
     
     def __init__(self):
         self.chain = [] # represents a chain of blocks
+        self.transactions = [] # represents a list of transactions which are added to a newly mined block
         self.create_block(proof = 1, previous_hash = "0") # creates a genesis block
 
     def create_block(self, proof, previous_hash):
@@ -23,9 +24,13 @@ class Blockchain:
             "index": len(self.chain) + 1,
             "timestamp": str(datetime.datetime.now()), # timestamp when the block was mined
             "proof": proof,
-            "previous_hash": previous_hash
+            "previous_hash": previous_hash,
+            "transactions": self.transactions
         }
         
+        # everytime a list of transactions is added to a new block, make sure that the very same list
+        # is NOT added to the next block
+        self.transactions = []
         logging.info("New block created: ", block)
         self.chain.append(block)
         return block
@@ -82,3 +87,12 @@ class Blockchain:
     def is_proof_of_work_valid(self, hash):
         return hash[:4] == "0000"
         
+    def add_transaction(self, sender, receiver, coinsAmount):
+        self.transactions.append({
+            "sender": sender,
+            "receiver": receiver,
+            "amount": coinsAmount
+        })
+            
+        # return an index of a block which will contain the list of transactions
+        return len(self.chain) + 1
