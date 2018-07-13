@@ -9,6 +9,7 @@ import hashlib
 import json
 import logging
 from urllib.parse import urlparse
+import requests
 
 # Part 3 - Building a Cryptocurrency
 
@@ -19,7 +20,7 @@ class Blockchain:
         self.chain = [] # represents a chain of blocks
         self.transactions = [] # represents a list of transactions which are added to a newly mined block
         self.create_block(proof = 1, previous_hash = "0") # creates a genesis block
-        self.nodes = new set() # a set of all nodes connected tot he network and containing a copy of the same blockchain
+        self.nodes = set() # a set of all nodes connected tot he network and containing a copy of the same blockchain
 
     def create_block(self, proof, previous_hash):
         block = {
@@ -58,9 +59,9 @@ class Blockchain:
         encoded_block = json.dumps(block, sort_keys = True).encode()
         return hashlib.sha256(encoded_block).hexdigest()
     
-    def is_chain_valid(self):
-        for index, block in enumerate(self.chain[1:], start=1):
-            previous_block = self.chain[index - 1]
+    def is_chain_valid(self, chain):
+        for index, block in enumerate(chain[1:], start=1):
+            previous_block = chain[index - 1]
             
             # check of previous hash matches
             if block["previous_hash"] != self.get_block_hash(previous_block):
@@ -102,3 +103,24 @@ class Blockchain:
     def add_node(self, address):
         parsed_url = urlparse(address)
         self.nodes.add(parsed_url.netloc) # an address represents a node connected to the network
+        
+    def replace_blockchain(self):
+        network = self.nodes
+        longest_chain = None
+        max_length = len(self.chain)
+        for node in network:
+            # for each node we will call a request to the server to get the blockhcain of the node
+            # each node is represented by its address on which it runs (e.g. 127.0.0.1:5000)
+            response = requests.get(f"http://{node}/blockchain")
+            if response.status_code == 200: # if response from the server was successful
+                responseJson = response.json()
+                length = responseJson["length"]
+                blockchain = responseJson["blockchain"]
+                if length > max_length and self.is_chain_valid(blockchain):
+                    max_length = length
+                    longest_chain = blockchain
+        if longest_chain:
+            self.chain = longest_chain
+            return True
+        
+        return False
