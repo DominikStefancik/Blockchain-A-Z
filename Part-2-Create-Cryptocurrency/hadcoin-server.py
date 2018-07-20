@@ -4,7 +4,7 @@ Created on Sat Jul 14 2018
 @author: Dominik Stefancik
 """
 
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from hadcoin import Blockchain
 from uuid import uuid4
 
@@ -90,5 +90,15 @@ def add_nodes():
     }
         
     return jsonify(response), 201
+
+@app.route("/replace_blockchain", methods=["GET"])
+def replace_blockchain():
+    is_blockchain_replaced = blockchain.replace_blockchain()
+    response = {
+        "is_blockchain_replaced": is_blockchain_replaced,
+        "blockchain": blockchain.chain        
+    }
+    
+    return jsonify(response), 200
 
 app.run(host = "0.0.0.0", port = 5000)
