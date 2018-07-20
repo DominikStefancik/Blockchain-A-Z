@@ -5,7 +5,7 @@ Created on Sat Jul 14 2018
 """
 
 from flask import Flask, jsonify
-from blockchain import Blockchain
+from hadcoin import Blockchain
 from uuid import uuid4
 
 # Part 2 - Mining our Blockchain
@@ -13,7 +13,7 @@ from uuid import uuid4
 #   1. transactions which go to the newly mined block
 #   2. transactions for the miner as a reward for mining a new block
 
-# the address is needed for the miner to receive Hadcoins for mininng a block
+# the address is needed for the miner to receive Hadcoins for mining a block
 node_address = str(uuid4()).replace("-", "")
 
 blockchain = Blockchain()
@@ -60,5 +60,20 @@ def is_valid_blockchain():
     }
     
     return jsonify(response), 200
+
+# adding a transaction to a newly mined block
+@app.route("/add_transaction", methods=["POST"])
+def add_transaction():
+    transactionData = request.get_json()
+    transaction_keys = ["sender", "receiver", "amount"]
+    if not all (key in  transactionData for key in transaction_keys):
+        return  "Some elements of transaction are missing", 400
+    
+    block_index = blockchain.add_transaction(
+            transactionData["sender"], transactionData["receiver"], transactionData["amount"])
+    response = {"message": f"Transaction added to the block with index {block_index}"}
+    
+    return jsonify(response), 201
+
 
 app.run(host = "0.0.0.0", port = 5000)
