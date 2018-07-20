@@ -75,5 +75,20 @@ def add_transaction():
     
     return jsonify(response), 201
 
+@app.route("/add_nodes", methods=["POST"])
+def add_nodes():
+    json = request.get_json()
+    nodes_to_add = json.get("nodes")
+    if nodes_to_add is None:
+        return "No node provided", 400
+    for node in nodes_to_add:
+        blockchain.add_node(node)
+        
+    response = {
+        "message": "All the nodes are now connected. The Hadcoin blockchain now contains the following nodes:",
+        "total_nodes" : blockchain.nodes            
+    }
+        
+    return jsonify(response), 201
 
 app.run(host = "0.0.0.0", port = 5000)
