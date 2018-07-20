@@ -4,6 +4,7 @@ Created on Sat Jul 14 2018
 @author: Dominik Stefancik
 """
 
+import sys 
 from flask import Flask, jsonify, request
 from hadcoin import Blockchain
 from uuid import uuid4
@@ -18,6 +19,9 @@ node_address = str(uuid4()).replace("-", "")
 
 blockchain = Blockchain()
 
+PORT            = sys.argv[1]
+RECEIVER_NAME   = sys.argv[2]
+
 # creates a new server
 app = Flask(__name__)
 
@@ -28,7 +32,7 @@ def mine_block():
     
     # the receiver is the miner who receives reward for mining a block
     # amount is the amount of Hadcoins the receiver gets for mining the block
-    blockchain.add_transaction(sender = node_address, receiver = "Dominik", amount = 1)
+    blockchain.add_transaction(sender = node_address, receiver = RECEIVER_NAME, amount = 1)
     previous_hash = blockchain.get_block_hash(previous_block)
     
     new_block = blockchain.create_block(proof, previous_hash)
@@ -101,4 +105,4 @@ def replace_blockchain():
     
     return jsonify(response), 200
 
-app.run(host = "0.0.0.0", port = 5000)
+app.run(host = "0.0.0.0", port = PORT)
