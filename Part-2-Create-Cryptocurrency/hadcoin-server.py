@@ -32,7 +32,7 @@ def mine_block():
     
     # the receiver is the miner who receives reward for mining a block
     # amount is the amount of Hadcoins the receiver gets for mining the block
-    blockchain.add_transaction(sender = node_address, receiver = RECEIVER_NAME, amount = 1)
+    blockchain.add_transaction(sender = node_address, receiver = RECEIVER_NAME, coinsAmount = 1)
     previous_hash = blockchain.get_block_hash(previous_block)
     
     new_block = blockchain.create_block(proof, previous_hash)
@@ -60,7 +60,7 @@ def get_blockchain():
 @app.route("/is_valid", methods=["GET"])
 def is_valid_blockchain():
     response = {
-        "isValid": blockchain.is_chain_valid(),        
+        "isValid": blockchain.is_chain_valid(blockchain.chain),        
     }
     
     return jsonify(response), 200
@@ -90,7 +90,7 @@ def add_nodes():
         
     response = {
         "message": "All the nodes are now connected. The Hadcoin blockchain now contains the following nodes:",
-        "total_nodes" : blockchain.nodes            
+        "total_nodes" : list(blockchain.nodes)            
     }
         
     return jsonify(response), 201
